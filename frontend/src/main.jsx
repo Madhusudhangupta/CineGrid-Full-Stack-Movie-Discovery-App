@@ -15,6 +15,7 @@ import Profile from '@/pages/Profile';
 import SearchResults from '@/pages/SearchResults';
 import Offline from '@/pages/Offline';
 import '@/styles/globals.css';
+import NotFound from './pages/NotFound';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -31,6 +32,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="profile" element={<Profile />} />
               <Route path="search/:searchTerm" element={<SearchResults />} />
               <Route path="offline" element={<Offline />} />
+              <Route path='*' element={<NotFound />} />
             </Route>
           </Routes>
         </BrowserRouter>
