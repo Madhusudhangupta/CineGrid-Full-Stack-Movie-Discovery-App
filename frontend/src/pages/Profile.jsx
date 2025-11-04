@@ -1,7 +1,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import UserProfile from '@/components/user/UserProfile';
-import Watchlist from '@/components/user/Watchlist';
+import Watchlist from '@/components/user/WatchList';
 import Achievements from '@/components/user/Achievements';
 import Recommendations from '@/components/user/Recommendations';
 import { useTranslation } from 'react-i18next';
