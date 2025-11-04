@@ -81,7 +81,10 @@ VITE_TMDB_API_KEY=your_tmdb_api_key
 
 | Home Page | Movie Detail | Watchlist |  
 |-----------|--------------|------------|  
-| ![Home](https://via.placeholder.com/300x200.png?text=Home+Page) | ![Movie Detail](https://via.placeholder.com/300x200.png?text=Movie+Detail) | ![Watchlist](https://via.placeholder.com/300x200.png?text=Watchlist) |  
+| ![Home](https://github.com/user-attachments/assets/4a78b776-4ddc-4bcb-a9dc-25c703cfb4a3) | ![Movie Detail](https://github.com/user-attachments/assets/614f513c-492b-40cc-b8b0-51d689e08705) | ![Watchlist](https://github.com/user-attachments/assets/86020746-32d7-41c7-8bfa-1e5a82702435) |  
+
+
+
 
 
 ---
