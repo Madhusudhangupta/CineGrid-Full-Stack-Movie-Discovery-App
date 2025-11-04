@@ -9,7 +9,7 @@ router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password');
     if (!user) return res.status(404).json({ error: 'User not found '});
-    return json({ user });
+    return res.json({ user });
   } catch (error) {
     res.status(500).json({error: 'Failed to fetch user'});
   }
