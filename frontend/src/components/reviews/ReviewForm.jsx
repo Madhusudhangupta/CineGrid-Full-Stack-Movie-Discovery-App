@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import { postReview } from '@/utils/api';
-import { useTranslation } from 'react-i18next';
 
 export default function ReviewForm({ movieId, setReviews }) {
-  const { t } = useTranslation();
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
@@ -17,7 +15,7 @@ export default function ReviewForm({ movieId, setReviews }) {
       setRating(1);
       setComment('');
     } catch {
-      setError(t('error.reviewFailed'));
+      setError('Failed to submit review');
     }
   };
 
@@ -25,7 +23,7 @@ export default function ReviewForm({ movieId, setReviews }) {
     <form onSubmit={handleSubmit} className="my-4">
       {/* Star Rating */}
       <div className="mb-4">
-        <label className="block text-sm mb-1">{t('rating')}</label>
+        <label className="block text-sm mb-1">Rating</label>
         <div className="flex items-center space-x-1">
           {[1, 2, 3, 4, 5].map((num) => (
             <button
@@ -47,7 +45,7 @@ export default function ReviewForm({ movieId, setReviews }) {
 
       {/* Comment */}
       <div className="mb-4">
-        <label htmlFor="comment" className="block text-sm">{t('comment')}</label>
+        <label htmlFor="comment" className="block text-sm">Comment</label>
         <textarea
           id="comment"
           value={comment}
@@ -64,7 +62,7 @@ export default function ReviewForm({ movieId, setReviews }) {
         type="submit"
         className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
       >
-        {t('submit')}
+        Submit
       </button>
     </form>
   );

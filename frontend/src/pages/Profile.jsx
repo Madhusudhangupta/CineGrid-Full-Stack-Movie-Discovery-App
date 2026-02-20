@@ -3,7 +3,6 @@ import { useAuth } from '@/hooks/useAuth';
 import Watchlist from '@/components/user/WatchList';
 import Achievements from '@/components/user/Achievements';
 import Recommendations from '@/components/user/Recommendations';
-import { useTranslation } from 'react-i18next';
 
 const formatMemberSince = (dateValue) => {
   if (!dateValue) return 'Recently';
@@ -14,7 +13,6 @@ const formatMemberSince = (dateValue) => {
 
 export default function Profile() {
   const { isAuthenticated, user } = useAuth();
-  const { t } = useTranslation();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -69,12 +67,12 @@ export default function Profile() {
 
       <div className="mt-6 space-y-6">
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5 sm:p-5">
-          <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-white">{t('watchlist')}</h2>
+          <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-white">Watchlist</h2>
           <Watchlist />
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5 sm:p-5">
-          <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-white">{t('recommendations')}</h2>
+          <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-white">Recommendations</h2>
           <Recommendations />
         </section>
 

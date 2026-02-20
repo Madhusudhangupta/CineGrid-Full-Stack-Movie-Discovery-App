@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { discoverMovies, fetchGenres } from '@/utils/api';
 import MovieCard from '@/components/movie/MovieCard';
 import Shimmer from '@/components/layout/Shimmer';
@@ -12,7 +11,6 @@ const PRESETS = [
 ];
 
 export default function Discover() {
-  const { t } = useTranslation();
   const [filters, setFilters] = useState({ sort_by: 'popularity.desc' });
   const [genres, setGenres] = useState([]);
   const [items, setItems] = useState([]);
@@ -78,7 +76,7 @@ export default function Discover() {
     <div className="px-0 py-1 sm:py-2">
       <div className="mb-4 flex flex-col gap-2 sm:mb-5">
         <h1 className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">
-          {t('discover', 'Discover')}
+          Discover
         </h1>
         <p className="text-sm text-slate-600 dark:text-slate-300">{subtitle}</p>
       </div>
@@ -161,9 +159,9 @@ export default function Discover() {
         </>
       ) : (
         <div className="py-10 text-center">
-          <h2 className="text-lg font-semibold mb-2">{t('noResults', 'No results found')}</h2>
+          <h2 className="text-lg font-semibold mb-2">No results found</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {t('tryAnother', 'Try adjusting your filters.')}
+            Try adjusting your filters.
           </p>
         </div>
       )}

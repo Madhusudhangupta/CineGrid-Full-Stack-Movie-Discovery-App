@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '@/utils/api';
-import { useTranslation } from 'react-i18next';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 
 export default function RegisterForm() {
-  const { t } = useTranslation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
@@ -46,7 +44,7 @@ export default function RegisterForm() {
       const apiError = data?.error || data?.message;
       const validationDetails = Array.isArray(data?.details) ? data.details[0] : '';
       const networkError = err?.message === 'Network Error' ? 'Unable to reach server. Check backend is running.' : '';
-      setError(apiError || validationDetails || networkError || t('error.registrationFailed'));
+      setError(apiError || validationDetails || networkError || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -59,7 +57,7 @@ export default function RegisterForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <h2 className="text-2xl font-bold text-center mb-6">{t('Register')}</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div className="auth-field">
@@ -135,7 +133,7 @@ export default function RegisterForm() {
           htmlFor="email"
           className="auth-label"
         >
-          {t('Email')}
+          Email
         </label>
       </div>
 
@@ -154,13 +152,13 @@ export default function RegisterForm() {
           htmlFor="password"
           className="auth-label"
         >
-          {t('Password')}
+          Password
         </label>
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-3 top-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          aria-label={showPassword ? t('Hide password') : t('Show password')}
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
         >
           {showPassword ? <AiOutlineEyeInvisible size={22} /> : <AiOutlineEye size={22} />}
         </button>
@@ -227,17 +225,17 @@ export default function RegisterForm() {
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
         ) : (
-          t('Register')
+          Register
         )}
       </button>
 
       <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-        {t('Already have an account?')}{' '}
+        Already have an account?{' '}
         <Link
           to="/login"
           className="text-blue-500 hover:underline hover:text-blue-600 dark:hover:text-blue-400"
         >
-          {t('Login')}
+          Login
         </Link>
       </div>
     </MotionForm>

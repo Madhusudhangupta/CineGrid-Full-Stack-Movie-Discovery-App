@@ -4,12 +4,10 @@ import { useDispatch } from 'react-redux';
 import { login } from '@/store/authSlice';
 import { Link } from 'react-router-dom';
 import api from '@/utils/api';
-import { useTranslation } from 'react-i18next';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 
 export default function LoginForm() {
-  const { t } = useTranslation();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +28,7 @@ export default function LoginForm() {
       dispatch(login(response.data.user));
       navigate('/');
     } catch {
-      setError(t('error.invalidCredentials'));
+      setError('Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -43,7 +41,7 @@ export default function LoginForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <h2 className="text-2xl font-bold text-center mb-6">{t('Login')}</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
 
       {/* Email or Username */}
       <div className="auth-field mb-6">
@@ -84,7 +82,7 @@ export default function LoginForm() {
           htmlFor="password"
           className="auth-label"
         >
-          {t('Password')}
+          Password
         </label>
 
         {/* Show/Hide Password Button */}
@@ -92,7 +90,7 @@ export default function LoginForm() {
           type="button"
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-3 top-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          aria-label={showPassword ? t('Hide password') : t('Show password')}
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
         >
           {showPassword ? <AiOutlineEyeInvisible size={22} /> : <AiOutlineEye size={22} />}
         </button>
@@ -139,17 +137,17 @@ export default function LoginForm() {
             ></path>
           </svg>
         ) : (
-          t('Login')
+          Login
         )}
       </button>
 
       <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-        {t("Don't have an account?")}{' '}
+        Don't have an account?{' '}
         <Link
           to="/register"
           className="text-blue-500 hover:underline hover:text-blue-600 dark:hover:text-blue-400"
         >
-          {t('Register')}
+          Register
         </Link>
       </div>
 

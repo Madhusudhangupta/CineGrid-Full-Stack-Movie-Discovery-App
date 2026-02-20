@@ -10,7 +10,6 @@ CineGrid is a **full-stack movie discovery platform** where users can:
 - Explore trending & upcoming movies from the **TMDb API**  
 - Save favorites to a **personal watchlist**  
 - Authenticate securely using **JWT**  
-- Switch languages with **i18n internationalization**  
 - Enjoy a sleek, **dark-mode enabled**, and **animated UI** with **Framer Motion**  
 
 ---
@@ -22,7 +21,6 @@ CineGrid is a **full-stack movie discovery platform** where users can:
 - Movie details, trailers & recommendations  
 - Secure **JWT Authentication** (Register/Login)  
 - **User profile management** with achievements & recommendations  
-- **Multi-language support** via `react-i18next`  
 - **Framer Motion animations** for smooth transitions  
 - Floating **heart button** to add/remove movies from watchlist  
 
@@ -33,7 +31,7 @@ CineGrid is a **full-stack movie discovery platform** where users can:
 **Frontend:** React.js, Redux Toolkit, Tailwind CSS, Framer Motion, Vite  
 **Backend:** Node.js, Express.js, MongoDB, JWT Authentication  
 **API:** [TMDb API](https://www.themoviedb.org/)  
-**Other Tools:** ESLint, PostCSS, i18n  
+**Other Tools:** ESLint, PostCSS  
 
 ---
 

@@ -2,11 +2,9 @@
 import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/hooks/useAuth';
-import { useTranslation } from 'react-i18next';
 
 export default function CommentsSection({ movieId }) {
   const { isAuthenticated, user } = useAuth();
-  const { t } = useTranslation();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [error, setError] = useState('');
@@ -14,13 +12,13 @@ export default function CommentsSection({ movieId }) {
   useEffect(() => {
     api.get(`/comments/${movieId}`)
       .then((response) => setComments(response.data?.items || []))
-      .catch(() => setError(t('error.fetchComments')));
-  }, [movieId, t]);
+      .catch(() => setError('Failed to load comments'));
+  }, [movieId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      setError(t('error.loginRequired'));
+      setError('Please log in to comment');
       return;
     }
     try {
@@ -28,7 +26,7 @@ export default function CommentsSection({ movieId }) {
       setComments((prev) => [...prev, response.data]);
       setNewComment('');
     } catch {
-      setError(t('error.commentFailed'));
+      setError('Failed to post comment');
     }
   };
 
@@ -37,16 +35,16 @@ export default function CommentsSection({ movieId }) {
       await api.delete(`/comments/${commentId}`);
       setComments((prev) => prev.filter((comment) => comment._id !== commentId));
     } catch {
-      setError(t('error.deleteComment'));
+      setError('Failed to delete comment');
     }
   };
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-bold">{t('comments')}</h2>
+      <h2 className="text-xl font-bold">Comments</h2>
       {error && <p className="text-red-500">{error}</p>}
       {comments.length === 0 ? (
-        <p>{t('noComments')}</p>
+        <p>No comments yet</p>
       ) : (
         comments.map((comment) => (
           <div key={comment._id} className="border p-4 rounded my-2">
@@ -58,7 +56,7 @@ export default function CommentsSection({ movieId }) {
                 onClick={() => handleDelete(comment._id)}
                 className="text-red-500 mt-2"
               >
-                {t('delete')}
+                Delete
               </button>
             )}
           </div>
@@ -70,9 +68,9 @@ export default function CommentsSection({ movieId }) {
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             className="w-full p-2 border rounded"
-            placeholder={t('writeComment')}
+            placeholder="Write a comment..."
           />
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded">{t('submit')}</button>
+          <button type="submit" className="bg-blue-500 text-white p-2 rounded">Submit</button>
         </form>
       )}
     </div>

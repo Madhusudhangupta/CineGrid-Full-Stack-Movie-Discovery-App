@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { discoverMovies, fetchGenres, fetchTrendingMovies } from '@/utils/api';
 import MovieCard from '@/components/movie/MovieCard';
 import Shimmer from '@/components/layout/Shimmer';
@@ -14,7 +13,6 @@ const PRESETS = [
 ];
 
 export default function Home({ defaultMode = 'trending' }) {
-  const { t } = useTranslation();
   const { results: searchResults, query, loading: searchLoading } = useSelector(
     (state) => state.search
   );
@@ -97,10 +95,10 @@ export default function Home({ defaultMode = 'trending' }) {
 
   const isLoading = showSearch ? searchLoading : loading;
   const title = showSearch
-    ? t('search.results', 'Search Results')
+    ? 'Search Results'
     : mode === 'discover'
-      ? t('discover', 'Discover Movies')
-      : t('trending', 'Trending Movies');
+      ? 'Discover Movies'
+      : 'Trending Movies';
 
   return (
     <div className="px-0 py-1 sm:py-2">
@@ -206,10 +204,10 @@ export default function Home({ defaultMode = 'trending' }) {
       ) : (
         <div className="col-span-full flex flex-col items-center justify-center py-10 text-center">
           <h2 className="text-lg font-semibold mb-2">
-            {t('noResults', 'No results found')}
+            No results found
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {t('tryAnother', 'Try searching with a different keyword.')}
+            Try searching with a different keyword.
           </p>
         </div>
       )}
