@@ -10,24 +10,26 @@ import { motion } from 'framer-motion';
 
 export default function LoginForm() {
   const { t } = useTranslation();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const MotionForm = motion.form;
+  const MotionP = motion.p;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { identifier, password });
       localStorage.setItem('token', response.data.token);
       dispatch(login(response.data.user));
       navigate('/');
-    } catch (err) {
+    } catch {
       setError(t('error.invalidCredentials'));
     } finally {
       setLoading(false);
@@ -35,7 +37,7 @@ export default function LoginForm() {
   };
 
   return (
-    <motion.form
+    <MotionForm
       onSubmit={handleSubmit}
       className="max-w-md mx-auto p-6 rounded-2xl shadow-lg bg-white dark:bg-gray-900"
       initial={{ opacity: 0, y: 20 }}
@@ -43,37 +45,29 @@ export default function LoginForm() {
     >
       <h2 className="text-2xl font-bold text-center mb-6">{t('Login')}</h2>
 
-      {/* Email */}
-      <div className="relative mb-6">
+      {/* Email or Username */}
+      <div className="auth-field mb-6">
         <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="identifier"
+          type="text"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
           required
           placeholder=" "
-          autoComplete="email"
-          className="peer w-full p-3 border border-gray-300 rounded-md bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all"
+          autoComplete="username"
+          className="auth-input"
         />
         <label
-          htmlFor="email"
-          className="absolute left-3 top-3 text-gray-500 dark:text-gray-400 text-sm transition-all 
-            peer-placeholder-shown:top-3 
-            peer-placeholder-shown:text-base 
-            peer-placeholder-shown:text-gray-400 
-            peer-focus:top-[-0.5rem] 
-            peer-focus:text-xs 
-            peer-focus:text-blue-500 
-            peer-focus:dark:text-blue-400 
-            bg-white dark:bg-gray-800 px-1"
+          htmlFor="identifier"
+          className="auth-label"
         >
-          {t('Email')}
+          Email or Username
         </label>
       </div>
 
 
       {/* Password */}
-      <div className="relative mb-6">
+      <div className="auth-field mb-6">
         <input
           id="password"
           type={showPassword ? 'text' : 'password'}
@@ -82,21 +76,13 @@ export default function LoginForm() {
           required
           placeholder=" "
           autoComplete="current-password"
-          className="peer w-full p-3 border border-gray-300 rounded-md bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all pr-10"
+          className="auth-input pr-10"
         />
         
         {/* Floating Label */}
         <label
           htmlFor="password"
-          className="absolute left-3 top-3 text-gray-500 dark:text-gray-400 text-sm transition-all 
-            peer-placeholder-shown:top-3 
-            peer-placeholder-shown:text-base 
-            peer-placeholder-shown:text-gray-400 
-            peer-focus:top-[-0.5rem] 
-            peer-focus:text-xs 
-            peer-focus:text-blue-500 
-            peer-focus:dark:text-blue-400 
-            bg-white dark:bg-gray-800 px-1"
+          className="auth-label"
         >
           {t('Password')}
         </label>
@@ -115,19 +101,19 @@ export default function LoginForm() {
 
       {/* Error */}
       {error && (
-        <motion.p
+        <MotionP
           className="text-red-500 mb-3 text-sm text-center"
           initial={{ x: -10, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
         >
           {error}
-        </motion.p>
+        </MotionP>
       )}
 
       {/* Submit */}
       <button
         type="submit"
-        disabled={!email || !password || loading}
+        disabled={!identifier || !password || loading}
         className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white p-3 rounded-lg font-medium transition-all flex items-center justify-center"
       >
         {loading ? (
@@ -168,6 +154,6 @@ export default function LoginForm() {
       </div>
 
 
-    </motion.form>
+    </MotionForm>
   );
 }

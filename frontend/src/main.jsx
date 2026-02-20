@@ -17,6 +17,16 @@ import Offline from '@/pages/Offline';
 import '@/styles/globals.css';
 import NotFound from './pages/NotFound';
 
+// Apply saved theme class before first render.
+try {
+  const storedTheme = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+  const shouldDark = storedTheme ? storedTheme === 'dark' : prefersDark;
+  document.documentElement.classList.toggle('dark', shouldDark);
+} catch {
+  // Ignore theme bootstrap failures in restricted environments.
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
@@ -25,6 +35,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path="/" element={<App />}>
               <Route index element={<Home />} />
+              <Route path="discover" element={<Home defaultMode="discover" />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="movie/:id" element={<MovieDetail />} />

@@ -6,8 +6,21 @@
     <title>Cinesphere</title>
     <!-- <link rel="manifest" href="manifest.json" /> -->
     <!-- <link rel="icon" href="/assets/icon.png" type="image/png" /> -->
+     <script>
+      (function () {
+        try {
+          const stored = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia && window.matchMedia('prefers-color-scheme: dark').matches;
+          if(stored === 'dark' || (!stored && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (_) {}
+      })();
+     </script>
   </head>
-  <body>
+  <body class="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

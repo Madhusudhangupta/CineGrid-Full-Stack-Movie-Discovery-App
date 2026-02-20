@@ -1,14 +1,23 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from '@/components/layout/Header';
-import Navbar from '@/components/layout/Navbar';
-import './index.css'
+import SearchBar from '@/components/layout/SearchBar';
 
 export default function App() {
+  const location = useLocation();
+  const hideSearchBar =
+    location.pathname === '/login' ||
+    location.pathname === '/register' ||
+    location.pathname === '/offline';
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#020b1f] dark:text-slate-100">
       <Header />
-      <Navbar />
-      <main className="container mx-auto p-4">
+      <main className="mx-auto w-full max-w-7xl px-4 py-6">
+        {!hideSearchBar && (
+          <div className="mb-5">
+            <SearchBar />
+          </div>
+        )}
         <Outlet />
       </main>
     </div>

@@ -32,6 +32,7 @@ export default function MovieCard({ movie }) {
         <img
           src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
           alt={movie.title}
+          loading='lazy'
           className="w-full aspect-[2/3] object-cover rounded"
         />
         <h3 className="text-md font-medium mt-2 text-center min-h-[3rem] flex items-center justify-center text-wrap">

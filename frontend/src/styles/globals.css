@@ -1,14 +1,177 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* --- Global body styles --- */
+html, body, #root {
+  min-height: 100%;
+}
 
 body {
-  background-color: #fff; /* bg-white */
+  @apply bg-slate-50 text-slate-900 transition-colors duration-300;
 }
+/* 
 html.dark body {
-  background-color: #111827; /* bg-gray-900 */
-  color: #fff;
-}
-/* html.dark * {
-  color: #fff;
+  @apply bg-gray-900 text-white;
 } */
+
+/* --- Creative UI helpers --- */
+.nav-glass {
+  background: linear-gradient(180deg, rgba(17,24,39,0.7), rgba(17,24,39,0.4));
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+}
+
+.header-grad {
+  background: linear-gradient(95deg, #09152f 0%, #041129 45%, #0b1b3d 100%);
+}
+
+.nav-underline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  transition: color 180ms ease;
+}
+
+.nav-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 7px;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 180ms ease;
+  background: linear-gradient(90deg, #22d3ee, #60a5fa);
+}
+
+.nav-underline:hover::after,
+.nav-underline.active::after {
+  transform: scaleX(1);
+}
+
+.filter-glass {
+  background: linear-gradient(180deg, rgba(31,41,55,0.55), rgba(31,41,55,0.35));
+  backdrop-filter: blur(8px);
+}
+
+.brand-gradient {
+  background: linear-gradient(90deg, #ffffff, #a5b4fc, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  color: rgba(255,255,255,0.9);
+  transition: all 200ms ease;
+}
+.nav-pill:hover { background-color: rgba(255,255,255,0.12); }
+.nav-pill.is-active { background-color: rgba(255,255,255,0.18); }
+
+.filter-label {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 6px;
+}
+
+.filter-input, .filter-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  color: white;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  outline: none;
+}
+.filter-input::placeholder { color: rgba(255,255,255,0.6); }
+
+.filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 40px;
+}
+
+.select-caret {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: rgba(255,255,255,0.8);
+}
+
+/* --- Auth floating fields --- */
+.auth-field {
+  position: relative;
+}
+
+.auth-input {
+  width: 100%;
+  border: 1px solid rgb(209 213 219);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  background: #ffffff;
+  color: #111827;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.dark .auth-input {
+  border-color: rgb(75 85 99);
+  background: rgb(31 41 55);
+  color: #ffffff;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: rgb(59 130 246);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.auth-label {
+  position: absolute;
+  left: 0.75rem;
+  top: -0.5rem;
+  padding: 0 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(59 130 246);
+  background: #ffffff;
+  pointer-events: none;
+  transition: all 180ms ease;
+}
+
+.dark .auth-label {
+  background: rgb(31 41 55);
+  color: rgb(96 165 250);
+}
+
+.auth-input:placeholder-shown + .auth-label {
+  top: 0.75rem;
+  font-size: 1rem;
+  color: rgb(107 114 128);
+}
+
+.dark .auth-input:placeholder-shown + .auth-label {
+  color: rgb(156 163 175);
+}
+
+.auth-input:focus + .auth-label {
+  top: -0.5rem;
+  font-size: 0.75rem;
+  color: rgb(59 130 246);
+}
+
+.dark .auth-input:focus + .auth-label {
+  color: rgb(96 165 250);
+}

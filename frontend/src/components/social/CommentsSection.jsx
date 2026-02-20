@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 
 export default function CommentsSection({ movieId }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { t } = useTranslation();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
@@ -13,8 +13,8 @@ export default function CommentsSection({ movieId }) {
 
   useEffect(() => {
     api.get(`/comments/${movieId}`)
-      .then((response) => setComments(response.data))
-      .catch((err) => setError(t('error.fetchComments')));
+      .then((response) => setComments(response.data?.items || []))
+      .catch(() => setError(t('error.fetchComments')));
   }, [movieId, t]);
 
   const handleSubmit = async (e) => {
@@ -27,7 +27,7 @@ export default function CommentsSection({ movieId }) {
       const response = await api.post('/comments', { movieId, comment: newComment });
       setComments((prev) => [...prev, response.data]);
       setNewComment('');
-    } catch (err) {
+    } catch {
       setError(t('error.commentFailed'));
     }
   };
@@ -36,7 +36,7 @@ export default function CommentsSection({ movieId }) {
     try {
       await api.delete(`/comments/${commentId}`);
       setComments((prev) => prev.filter((comment) => comment._id !== commentId));
-    } catch (err) {
+    } catch {
       setError(t('error.deleteComment'));
     }
   };
@@ -53,7 +53,7 @@ export default function CommentsSection({ movieId }) {
             <p className="font-bold">{comment.user.name}</p>
             <p>{comment.comment}</p>
             <p className="text-sm text-gray-500">{new Date(comment.createdAt).toLocaleDateString()}</p>
-            {isAuthenticated && comment.user._id === useAuth().user?.id && (
+            {isAuthenticated && comment.user?._id === (user?.id || user?._id) && (
               <button
                 onClick={() => handleDelete(comment._id)}
                 className="text-red-500 mt-2"

@@ -15,7 +15,7 @@ export default function Recommendations() {
     if (isAuthenticated) {
       api.get('/recommendations')
         .then((response) => setRecommendations(response.data))
-        .catch((err) => setError(t('error.fetchRecommendations')));
+        .catch(() => setError(t('error.fetchRecommendations')));
     }
   }, [isAuthenticated, t]);
 

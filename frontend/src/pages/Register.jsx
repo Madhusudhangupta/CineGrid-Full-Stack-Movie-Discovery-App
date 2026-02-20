@@ -1,13 +1,23 @@
 
 import RegisterForm from '@/components/auth/RegisterForm';
-import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Register() {
-  const { t } = useTranslation();
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{t('register')}</h1>
+    <section className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-4 sm:py-8">
+      <div className="mx-auto mb-4 w-full max-w-md text-center">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          Create your account to save watchlists and recommendations.
+        </p>
+      </div>
       <RegisterForm />
-    </div>
+    </section>
   );
 }

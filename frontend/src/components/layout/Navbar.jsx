@@ -1,48 +1,9 @@
-
-// import { NavLink } from 'react-router-dom';
-// import { useAuth } from '@/hooks/useAuth';
-// import { useDispatch } from 'react-redux';
-// import { logout } from '@/store/authSlice';
-// import { useTranslation } from 'react-i18next';
-
-// export default function Navbar() {
-//   const { isAuthenticated } = useAuth();
-//   const dispatch = useDispatch();
-//   const { t } = useTranslation();
-
-//   const handleLogout = () => {
-//     localStorage.removeItem('token');
-//     dispatch(logout());
-//   };
-
-//   return (
-//     <nav className="bg-gray-700 text-white p-4">
-//       <ul className="container mx-auto flex space-x-4">
-//         <li><NavLink to="/">{t('home')}</NavLink></li>
-//         {isAuthenticated ? (
-//           <>
-//             <li><NavLink to="/profile">{t('profile')}</NavLink></li>
-//             <li><button onClick={handleLogout}>{t('logout')}</button></li>
-//           </>
-//         ) : (
-//           <>
-//             <li><NavLink to="/login">{t('login')}</NavLink></li>
-//             <li><NavLink to="/register">{t('register')}</NavLink></li>
-//           </>
-//         )}
-//       </ul>
-//     </nav>
-//   );
-// }
-
-
-
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/store/authSlice';
 import { useTranslation } from 'react-i18next';
-import { FaUserCircle } from 'react-icons/fa'; // ✅ Profile icon
+import { FaUserCircle } from 'react-icons/fa'; 
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();

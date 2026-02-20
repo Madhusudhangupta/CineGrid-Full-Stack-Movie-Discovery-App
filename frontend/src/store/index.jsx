@@ -6,7 +6,7 @@ import searchReducer from './searchSlice';
 import themeReducer from './themeSlice';
 import userReducer from './userSlice';
 
-export default configureStore({
+const store = configureStore({
   reducer: {
     auth: authReducer,
     movies: moviesReducer,
@@ -15,3 +15,5 @@ export default configureStore({
     user: userReducer,
   },
 });
+
+export default store;

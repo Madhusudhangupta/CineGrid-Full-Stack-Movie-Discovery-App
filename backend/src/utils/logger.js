@@ -17,5 +17,8 @@ const accessLogStream = rfs('access.log', {
 
 module.exports = {
     dev: morgan('dev'),
-    combined: morgan('combined', { stream: accessLogStream })
+    combined: morgan('combined', { stream: accessLogStream }),
+    info: (...args) => console.log(...args),
+    warn: (...args) => console.warn(...args),
+    error: (...args) => console.error(...args),
 }

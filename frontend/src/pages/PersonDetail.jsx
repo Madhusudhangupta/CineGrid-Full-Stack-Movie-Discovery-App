@@ -11,7 +11,7 @@ export default function PersonDetail() {
   useEffect(() => {
     api.get(`/people/${id}`)
       .then((response) => setPerson(response.data))
-      .catch((err) => setError('Failed to load person details'));
+      .catch(() => setError('Failed to load person details'));
   }, [id]);
 
   if (error) {

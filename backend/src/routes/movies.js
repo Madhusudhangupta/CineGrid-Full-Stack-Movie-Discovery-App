@@ -4,6 +4,9 @@ const {
   fetchMovieById,
   fetchSimilarMovies,
   searchMovies,
+  fetchGenres,
+  discoverMovies,
+  fetchProviders,
 } = require('../utils/api');
 
 const router = express.Router();
@@ -20,16 +23,48 @@ router.get('/trending', async (req, res) => {
   }
 });
 
+// Genres
+router.get('/genres', async (req, res) => {
+  try {
+    const genres = await fetchGenres();
+    res.json(genres);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch genres' });
+  }
+});
+
+// Discover with filters
+router.get('/discover', async (req, res) => {
+  try {
+    const { with_genres, year, sort_by, page } = req.query;
+    const data = await discoverMovies({
+      with_genres,
+      primary_release_year: year ? Number(year) : undefined,
+      sort_by,
+      page: page ? Number(page) : 1,
+    });
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to discover movies' });
+  }
+});
+
 //  Search movies by query
 router.get('/search', async (req, res) => {
   try {
-    const { query } = req.query;
-    if (!query) {
+    const { query, page } = req.query;
+    const normalizedQuery = String(query || '').trim();
+    if (!normalizedQuery) {
       return res.status(400).json({ error: 'Query parameter is required' });
     }
-    const results = await searchMovies(query);
-    console.log('Searched movies', { query, count: results.length });
-    res.json(results);
+    if (normalizedQuery.length < 2) {
+      return res.json({ page: 1, results: [], total_pages: 0, total_results: 0 });
+    }
+    const numericPage = Number(page);
+    const safePage = Number.isFinite(numericPage) && numericPage > 0 ? numericPage : 1;
+    const data = await searchMovies(normalizedQuery, safePage);
+    console.log('Searched movies', { query: normalizedQuery, count: data?.results?.length || 0 });
+    res.json(data);
   } catch (error) {
     console.error('Failed to search movies', { error });
     res.status(500).json({ error: 'Failed to search movies' });
@@ -57,6 +92,16 @@ router.get('/:id/similar', async (req, res) => {
   } catch (error) {
     console.error('Failed to fetch similar movies', { error, id: req.params.id });
     res.status(500).json({ error: 'Failed to fetch similar movies' });
+  }
+});
+
+// Where to watch (providers)
+router.get('/:id/providers', async (req, res) => {
+  try {
+    const providers = await fetchProviders(req.params.id);
+    res.json(providers);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch providers' });
   }
 });
 

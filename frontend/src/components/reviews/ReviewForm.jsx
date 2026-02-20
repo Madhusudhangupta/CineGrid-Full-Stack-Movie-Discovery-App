@@ -12,11 +12,11 @@ export default function ReviewForm({ movieId, setReviews }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const review = await postReview(movieId, rating, comment);
+      const review = await postReview({ movieId, rating, comment });
       setReviews((prev) => [...prev, review]);
       setRating(1);
       setComment('');
-    } catch (err) {
+    } catch {
       setError(t('error.reviewFailed'));
     }
   };

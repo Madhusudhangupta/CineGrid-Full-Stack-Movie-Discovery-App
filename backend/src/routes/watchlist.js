@@ -21,12 +21,14 @@ router.get('/', authMiddleware, async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   const { movieId } = req.body;
   try {
+    const id = Number(movieId);
+    if(!Number.isFinite(id)) return res.status(400).json({ error: 'Invalid movieId' });
     let watchlist = await Watchlist.findOne({ user: req.user.userId });
     if (!watchlist) {
-      watchlist = new Watchlist({ user: req.user.userId, movies: [movieId] });
+      watchlist = new Watchlist({ user: req.user.userId, movies: [id] });
     } else {
-      if (!watchlist.movies.includes(movieId)) {
-        watchlist.movies.push(movieId);
+      if (!watchlist.movies.includes(id)) {
+        watchlist.movies.push(id);
       }
     }
     await watchlist.save();
