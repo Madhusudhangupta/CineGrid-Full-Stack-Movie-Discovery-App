@@ -1,14 +1,16 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSearchResults, setQuery, clearResults } from "@/store/searchSlice";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Shimmer from "@/components/layout/Shimmer";
 import MovieCard from "@/components/movie/MovieCard";
 
 const SearchResults = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { searchTerm = "" } = useParams();
+  const lastDispatchedRef = useRef('');
 
   const { query, results, loading, error, page, total_pages, total_results } = useSelector(
     (state) => state.search
@@ -23,17 +25,20 @@ const SearchResults = () => {
     }
     if (term !== query) {
       dispatch(setQuery(term));
-      dispatch(fetchSearchResults({ query: term, page: 1 }));
+      if (term !== lastDispatchedRef.current) {
+        dispatch(fetchSearchResults({ query: term, page: 1 }));
+        lastDispatchedRef.current = term;
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, dispatch]);
 
   // If user cleared query elsewhere, go home
   useEffect(() => {
-    if (!query.trim() && searchTerm) {
+    if (!query.trim() && searchTerm && location.pathname.startsWith("/search/")) {
       navigate("/", { replace: true });
     }
-  }, [query, searchTerm, navigate]);
+  }, [query, searchTerm, navigate, location.pathname]);
 
   const handlePageChange = useCallback(
     (targetPage) => {
@@ -84,9 +89,7 @@ const SearchResults = () => {
         <>
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {results.map((movie) => (
-              <div key={movie.id} className="min-w-0">
-                <MovieCard movie={movie} />
-              </div>
+              <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
 

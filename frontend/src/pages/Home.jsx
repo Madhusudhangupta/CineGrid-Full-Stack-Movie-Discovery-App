@@ -196,9 +196,7 @@ export default function Home({ defaultMode = 'trending' }) {
       ) : Array.isArray(displayMovies) && displayMovies.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {displayMovies.map((movie) => (
-            <div key={movie.id} className="min-w-0">
-              <MovieCard movie={movie} />
-            </div>
+            <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>
       ) : (

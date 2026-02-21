@@ -15,6 +15,7 @@ export default function SearchBar() {
   const prevPathRef = useRef(location.pathname);
   const currentPathRef = useRef(location.pathname);
   const latestInputRef = useRef(inputValue);
+  const lastDispatchedQueryRef = useRef('');
 
   useEffect(() => {
     currentPathRef.current = location.pathname;
@@ -34,16 +35,20 @@ export default function SearchBar() {
   // Fetch and sync route when debounced query changes.
   // Do not depend on pathname changes here; that can replay stale values.
   useEffect(() => {
+    if (!inputValue.trim()) return;
     const normalized = debouncedQuery.trim();
-    if (!latestInputRef.current.trim()) return;
-    if (normalized) {
-      dispatch(fetchSearchResults({ query: normalized, page: 1 }));
-      const target = `/search/${encodeURIComponent(normalized)}`;
-      if (currentPathRef.current !== target) {
-        navigate(target, { replace: true });
+    if (!normalized) return;
+    if (normalized !== lastDispatchedQueryRef.current) {
+      if (!location.pathname.startsWith("/search/")) {
+        dispatch(fetchSearchResults({ query: normalized, page: 1 }));
       }
+      lastDispatchedQueryRef.current = normalized;
     }
-  }, [debouncedQuery, dispatch, navigate]);
+    const target = `/search/${encodeURIComponent(normalized)}`;
+    if (currentPathRef.current !== target && location.pathname === "/") {
+      navigate(target, { replace: true });
+    }
+  }, [debouncedQuery, dispatch, navigate, location.pathname, inputValue]);
 
   // Keep focus after route transitions while user is searching,
   // and also when clearing search moves /search/... back to /.
