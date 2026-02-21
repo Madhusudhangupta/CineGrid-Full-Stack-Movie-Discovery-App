@@ -27,8 +27,11 @@ export default function LoginForm() {
       localStorage.setItem('token', response.data.token);
       dispatch(login(response.data.user));
       navigate('/');
-    } catch {
-      setError('Invalid credentials');
+    } catch (err) {
+      const data = err?.response?.data;
+      const apiError = data?.error || data?.message;
+      const networkError = err?.message === 'Network Error' ? 'Unable to reach server. Check backend is running.' : '';
+      setError(apiError || networkError || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -137,7 +140,7 @@ export default function LoginForm() {
             ></path>
           </svg>
         ) : (
-          Login
+          "Login"
         )}
       </button>
 
