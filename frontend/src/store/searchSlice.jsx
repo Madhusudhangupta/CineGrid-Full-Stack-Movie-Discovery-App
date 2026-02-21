@@ -3,17 +3,13 @@ import { searchMovies as apiSearchMovies } from '@/utils/api';
 
 export const fetchSearchResults = createAsyncThunk(
   'search/fetchSearchResults',
-  async ({ query, page = 1 }, { rejectWithValue }) => {
+  async ({ query, page = 1, limit = 20 }, { rejectWithValue }) => {
     try {
       const normalizedQuery = String(query || '').trim();
       if (!normalizedQuery) {
         return { page: 1, results: [], total_pages: 0, total_results: 0, query: '' };
       }
-      // Avoid noisy API failures for very short queries.
-      if (normalizedQuery.length < 2) {
-        return { page: 1, results: [], total_pages: 0, total_results: 0, query: normalizedQuery };
-      }
-      const data = await apiSearchMovies(normalizedQuery, page); // { page, results, total_pages, total_results }
+      const data = await apiSearchMovies(normalizedQuery, page, limit); // { page, results, total_pages, total_results }
       return { ...data, query: normalizedQuery };
     } catch (err) {
       return rejectWithValue(err?.message || 'Failed to search');
@@ -74,11 +70,8 @@ const searchSlice = createSlice({
         // If query changed mid-flight, ignore stale responses
         if (query.trim() !== state.query.trim()) return;
 
-        // Merge results for infinite scroll (dedupe by id)
-        const existing = new Map(state.results.map((m) => [m.id, m]));
-        for (const m of Array.isArray(results) ? results : []) existing.set(m.id, m);
-
-        state.results = page === 1 ? (Array.isArray(results) ? results : []) : Array.from(existing.values());
+        // Show only results for the current page
+        state.results = Array.isArray(results) ? results : [];
         state.page = page;
         state.total_pages = total_pages || state.total_pages;
         state.total_results = total_results ?? state.total_results;

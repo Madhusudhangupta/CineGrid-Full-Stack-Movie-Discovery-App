@@ -8,7 +8,7 @@ export default function SearchBar() {
   const dispatch = useDispatch();
   const { query } = useSelector((state) => state.search);
   const [inputValue, setInputValue] = useState(query);
-  const debouncedQuery = useDebounce(inputValue, 500);
+  const debouncedQuery = useDebounce(inputValue, 300);
   const navigate = useNavigate();
   const location = useLocation();
   const inputRef = useRef(null);
@@ -36,19 +36,17 @@ export default function SearchBar() {
   // Do not depend on pathname changes here; that can replay stale values.
   useEffect(() => {
     if (!inputValue.trim()) return;
-    const normalized = debouncedQuery.trim();
+    const normalized = inputValue.trim();
     if (!normalized) return;
     if (normalized !== lastDispatchedQueryRef.current) {
-      if (!location.pathname.startsWith("/search/")) {
-        dispatch(fetchSearchResults({ query: normalized, page: 1 }));
-      }
+      dispatch(fetchSearchResults({ query: normalized, page: 1 }));
       lastDispatchedQueryRef.current = normalized;
     }
     const target = `/search/${encodeURIComponent(normalized)}`;
-    if (currentPathRef.current !== target && location.pathname === "/") {
+    if (currentPathRef.current !== target && (location.pathname === "/" || location.pathname.startsWith("/search/"))) {
       navigate(target, { replace: true });
     }
-  }, [debouncedQuery, dispatch, navigate, location.pathname, inputValue]);
+  }, [inputValue, dispatch, navigate, location.pathname]);
 
   // Keep focus after route transitions while user is searching,
   // and also when clearing search moves /search/... back to /.

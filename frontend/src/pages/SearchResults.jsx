@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSearchResults, setQuery, clearResults } from "@/store/searchSlice";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
@@ -11,6 +11,23 @@ const SearchResults = () => {
   const location = useLocation();
   const { searchTerm = "" } = useParams();
   const lastDispatchedRef = useRef('');
+  const [itemsPerPage, setItemsPerPage] = useState(18);
+
+  // Calculate responsive items per page based on screen width
+  useEffect(() => {
+    const calculateItemsPerPage = () => {
+      const width = window.innerWidth;
+      if (width < 640) return 12;   // mobile: 2 cols × 6 rows
+      if (width < 768) return 18;   // sm: 3 cols × 6 rows
+      if (width < 1024) return 24;  // md: 4 cols × 6 rows
+      return 36;                     // lg: 6 cols × 6 rows
+    };
+    
+    setItemsPerPage(calculateItemsPerPage());
+    const handleResize = () => setItemsPerPage(calculateItemsPerPage());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const { query, results, loading, error, page, total_pages, total_results } = useSelector(
     (state) => state.search
@@ -26,12 +43,12 @@ const SearchResults = () => {
     if (term !== query) {
       dispatch(setQuery(term));
       if (term !== lastDispatchedRef.current) {
-        dispatch(fetchSearchResults({ query: term, page: 1 }));
+        dispatch(fetchSearchResults({ query: term, page: 1, limit: itemsPerPage }));
         lastDispatchedRef.current = term;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, dispatch]);
+  }, [searchTerm, dispatch, itemsPerPage]);
 
   // If user cleared query elsewhere, go home
   useEffect(() => {
@@ -45,10 +62,10 @@ const SearchResults = () => {
       if (loading || !query.trim() || targetPage < 1 || targetPage > total_pages || targetPage === page) {
         return;
       }
-      dispatch(fetchSearchResults({ query, page: targetPage }));
+      dispatch(fetchSearchResults({ query, page: targetPage, limit: itemsPerPage }));
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [dispatch, loading, page, query, total_pages]
+    [dispatch, loading, page, query, total_pages, itemsPerPage]
   );
 
   const pagination = useMemo(() => {

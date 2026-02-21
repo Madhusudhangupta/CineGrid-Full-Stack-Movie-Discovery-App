@@ -52,18 +52,16 @@ router.get('/discover', async (req, res) => {
 //  Search movies by query
 router.get('/search', async (req, res) => {
   try {
-    const { query, page } = req.query;
+    const { query, page, limit } = req.query;
     const normalizedQuery = String(query || '').trim();
     if (!normalizedQuery) {
       return res.status(400).json({ error: 'Query parameter is required' });
     }
-    if (normalizedQuery.length < 2) {
-      return res.json({ page: 1, results: [], total_pages: 0, total_results: 0 });
-    }
     const numericPage = Number(page);
     const safePage = Number.isFinite(numericPage) && numericPage > 0 ? numericPage : 1;
-    const data = await searchMovies(normalizedQuery, safePage);
-    console.log('Searched movies', { query: normalizedQuery, count: data?.results?.length || 0 });
+    const numericLimit = Number(limit);
+    const safeLimit = Number.isFinite(numericLimit) && numericLimit > 0 ? numericLimit : 20;
+    const data = await searchMovies(normalizedQuery, safePage, safeLimit);
     res.json(data);
   } catch (error) {
     console.error('Failed to search movies', { error });

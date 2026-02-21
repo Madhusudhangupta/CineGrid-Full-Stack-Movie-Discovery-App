@@ -8,7 +8,8 @@ export default function App() {
     location.pathname === '/login' ||
     location.pathname === '/register' ||
     location.pathname === '/offline' ||
-    location.pathname === '/profile';
+    location.pathname === '/profile' ||
+    location.pathname.startsWith('/movie/');
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#020b1f] dark:text-slate-100">
