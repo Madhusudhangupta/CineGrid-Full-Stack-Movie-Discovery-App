@@ -7,7 +7,8 @@ export default function App() {
   const hideSearchBar =
     location.pathname === '/login' ||
     location.pathname === '/register' ||
-    location.pathname === '/offline';
+    location.pathname === '/offline' ||
+    location.pathname === '/profile';
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#020b1f] dark:text-slate-100">
