@@ -22,6 +22,9 @@ export default function Home({ defaultMode = 'trending' }) {
   const { isAuthenticated } = useAuth();
 
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [mode, setMode] = useState(defaultMode === 'discover' ? 'discover' : 'trending');
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [genres, setGenres] = useState([]);
@@ -44,15 +47,22 @@ export default function Home({ defaultMode = 'trending' }) {
     let cancelled = false;
     setLoading(true);
     setError('');
+    setPage(1);
 
     const load = async () => {
       try {
         if (mode === 'trending') {
           const data = await fetchTrendingMovies();
-          if (!cancelled) setItems(Array.isArray(data) ? data : []);
+          if (!cancelled) {
+            setItems(Array.isArray(data) ? data : data?.results || []);
+            setHasMore(false); // Trending defaults to 1 page for now
+          }
         } else {
           const data = await discoverMovies({ ...filters, page: 1 });
-          if (!cancelled) setItems(Array.isArray(data?.results) ? data.results : []);
+          if (!cancelled) {
+            setItems(Array.isArray(data?.results) ? data.results : []);
+            setHasMore(data?.page < data?.total_pages);
+          }
         }
       } catch {
         if (!cancelled) {
@@ -69,6 +79,22 @@ export default function Home({ defaultMode = 'trending' }) {
       cancelled = true;
     };
   }, [query, mode, filters]);
+
+  const loadMore = async () => {
+    if (isFetchingNextPage || !hasMore || mode === 'trending') return;
+    setIsFetchingNextPage(true);
+    try {
+      const nextPage = page + 1;
+      const data = await discoverMovies({ ...filters, page: nextPage });
+      setItems(prev => [...prev, ...(data?.results || [])]);
+      setPage(nextPage);
+      setHasMore(data?.page < data?.total_pages);
+    } catch (err) {
+      console.error('Failed to load more movies:', err);
+    } finally {
+      setIsFetchingNextPage(false);
+    }
+  };
 
   const updateFilter = (key, value) => {
     setMode('discover');
@@ -201,11 +227,24 @@ export default function Home({ defaultMode = 'trending' }) {
           {isLoading && displayMovies.length === 0 ? (
             <Shimmer />
           ) : Array.isArray(displayMovies) && displayMovies.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6">
-              {displayMovies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6">
+                {displayMovies.map((movie) => (
+                  <MovieCard key={movie.id} movie={movie} />
+                ))}
+              </div>
+              {!showSearch && mode === 'discover' && hasMore && (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    onClick={loadMore}
+                    disabled={isFetchingNextPage}
+                    className="rounded-full bg-sky-500/10 px-6 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-sky-500/20 dark:text-sky-400 dark:hover:bg-sky-500/30"
+                  >
+                    {isFetchingNextPage ? 'Loading...' : 'Load More'}
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="col-span-full flex flex-col items-center justify-center py-10 text-center">
               <h2 className="text-lg font-semibold mb-2">

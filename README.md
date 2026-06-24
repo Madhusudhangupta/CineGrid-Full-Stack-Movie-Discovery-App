@@ -16,13 +16,16 @@ CineSphere is a full-stack web application that allows users to discover, explor
 - **Reviews & Ratings**: Write and read movie reviews with star ratings
 - **Social Comments**: Engage with other users through movie comments
 - **Watchlist Management**: Create and manage personal watchlists
-- **Custom Lists**: Organize movies into custom user-created lists
+- **Custom Lists**: Organize movies into custom user-created lists with collaborative editing
+- **Clubs / Groups**: Join or create movie clubs to discuss favorite films
+- **Activity Feed**: See what your friends are rating, reviewing, and adding to their lists with infinite scrolling
 - **User Profiles**: Complete profiles with bio, preferences, and viewing history
 - **Notifications**: Stay updated with personalized notifications
 - **Dark Mode**: Toggle between light and dark themes
 - **Responsive Design**: Optimized for desktop and mobile devices
 - **Secure Authentication**: JWT-based authentication with password reset
 - **Real-time Features**: Live comments and notifications
+- **Performance Optimized**: Debounced search, optimized MongoDB indexing, and infinite scroll pagination
 
 ---
 
@@ -204,6 +207,8 @@ cinesphere/
 - **User Reviews**: Star ratings and written reviews
 - **Comments System**: Real-time comments on movies
 - **User Profiles**: Follow/unfollow other users
+- **Activity Feed**: Infinite scrolling feed of friends' activity
+- **Clubs**: Create and join groups for discussions
 - **Achievements**: Gamification elements
 - **Notifications**: Activity updates and recommendations
 
@@ -288,19 +293,3 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 For questions or support, please open an issue on GitHub or contact the maintainers.
 
 **Happy movie discovering!**
-
-
-## Contributing  
-Pull requests are welcome! For major changes, please open an issue first to discuss.  
-
----
-
-## License  
-This project is licensed under the **MIT License**.  
-
----
-
-## Acknowledgements  
-- [TMDb API](https://www.themoviedb.org/) for movie data  
-- [Framer Motion](https://www.framer.com/motion/) for animations  
-- [TailwindCSS](https://tailwindcss.com/) for UI styling  

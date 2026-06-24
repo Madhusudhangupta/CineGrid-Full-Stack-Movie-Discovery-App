@@ -10,6 +10,7 @@ const customListSchema = new mongoose.Schema({
     mediaType: { type: String, enum: ['movie', 'tv'], default: 'movie' }
   }],
   isPublic: { type: Boolean, default: false, index: true },
+  collaborators: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   coverImage: { type: String }, // URL
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

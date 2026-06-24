@@ -28,9 +28,11 @@ router.get('/my-lists', authMiddleware, async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
+  const query = { $or: [{ user: req.user._id }, { collaborators: req.user._id }] };
+
   const [lists, total] = await Promise.all([
-    CustomList.find({ user: req.user._id }).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)),
-    CustomList.countDocuments({ user: req.user._id }),
+    CustomList.find(query).populate('collaborators', 'username avatar').sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)),
+    CustomList.countDocuments(query),
   ]);
 
   res.json({ items: lists, page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / limit) });
@@ -65,7 +67,7 @@ router.post('/', authMiddleware, validate(createListSchema), async (req, res) =>
 router.post('/:listId/items', authMiddleware, async (req, res) => {
   const { listId } = req.params;
   const { mediaId, mediaType = 'movie' } = req.body;
-  const list = await CustomList.findOne({ _id: listId, user: req.user._id });
+  const list = await CustomList.findOne({ _id: listId, $or: [{ user: req.user._id }, { collaborators: req.user._id }] });
   if (!list) return res.status(404).json({ error: 'List not found' });
   
   if (!list.items) list.items = [];
@@ -82,7 +84,7 @@ router.delete('/:listId/items/:mediaId', authMiddleware, async (req, res) => {
   const { listId, mediaId } = req.params;
   const { mediaType = 'movie' } = req.query; // pass mediaType in query, or default to movie
 
-  const list = await CustomList.findOne({ _id: listId, user: req.user._id });
+  const list = await CustomList.findOne({ _id: listId, $or: [{ user: req.user._id }, { collaborators: req.user._id }] });
   if (!list) return res.status(404).json({ error: 'List not found' });
 
   if (list.items) {
@@ -106,6 +108,33 @@ router.delete('/:listId', authMiddleware, async (req, res) => {
 
   await list.deleteOne();
   res.json({ message: 'List deleted' });
+});
+
+// Add collaborator
+router.post('/:listId/collaborators', authMiddleware, async (req, res) => {
+  const { listId } = req.params;
+  const { userId } = req.body;
+
+  const list = await CustomList.findOne({ _id: listId, user: req.user._id });
+  if (!list) return res.status(404).json({ error: 'List not found or you are not the owner' });
+  
+  if (list.collaborators.includes(userId)) return res.status(400).json({ error: 'User is already a collaborator' });
+  
+  list.collaborators.push(userId);
+  await list.save();
+  res.json(list);
+});
+
+// Remove collaborator
+router.delete('/:listId/collaborators/:userId', authMiddleware, async (req, res) => {
+  const { listId, userId } = req.params;
+
+  const list = await CustomList.findOne({ _id: listId, user: req.user._id });
+  if (!list) return res.status(404).json({ error: 'List not found or you are not the owner' });
+
+  list.collaborators = list.collaborators.filter(id => id.toString() !== userId);
+  await list.save();
+  res.json(list);
 });
 
 module.exports = router;

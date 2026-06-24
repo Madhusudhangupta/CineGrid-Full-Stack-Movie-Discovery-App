@@ -75,11 +75,10 @@ export default function Header() {
             </span>
           </NavLink>
 
-          {/* Desktop Nav */}
-          <nav className="hidden items-center gap-2 lg:gap-3 md:flex">
-            <NavLink to="/discover" className={linkClass}>
-              Discover
-            </NavLink>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex gap-6 items-center">
+            <NavLink to="/discover" className={linkClass}>Discover</NavLink>
+            <NavLink to="/groups" className={linkClass}>Clubs</NavLink>
           </nav>
 
           {/* Right Section */}

@@ -18,6 +18,7 @@ const notificationsRoutes = require('./routes/notifications');
 const customListsRoutes = require('./routes/customLists');
 const profileRoutes = require('./routes/profile');
 const passwordResetRoutes = require('./routes/passwordReset');
+const groupsRoutes = require('./routes/groups');
 
 // dotenv.config();
 require('mandatoryenv').load([
@@ -83,6 +84,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/custom-lists', customListsRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
+app.use('/api/groups', groupsRoutes);
 
 // global error handler to catch unhandled errors
 app.use((err, req, res, next) => {

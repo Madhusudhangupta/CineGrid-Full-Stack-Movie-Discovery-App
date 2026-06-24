@@ -9,4 +9,6 @@ const reviewSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+reviewSchema.index({ movieId: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Review', reviewSchema);

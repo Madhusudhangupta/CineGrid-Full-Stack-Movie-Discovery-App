@@ -118,6 +118,79 @@ export const fetchProfileStats = async () => {
   return data;
 };
 
+// Custom Lists
+export const fetchCustomLists = async (page = 1, limit = 10) => {
+  const { data } = await api.get('/custom-lists/my-lists', { params: { page, limit } });
+  return data;
+};
+
+export const createCustomList = async (listData) => {
+  const { data } = await api.post('/custom-lists', listData);
+  return data;
+};
+
+export const deleteCustomList = async (listId) => {
+  const { data } = await api.delete(`/custom-lists/${listId}`);
+  return data;
+};
+
+export const addCollaborator = async (listId, userId) => {
+  const { data } = await api.post(`/custom-lists/${listId}/collaborators`, { userId });
+  return data;
+};
+
+export const removeCollaborator = async (listId, userId) => {
+  const { data } = await api.delete(`/custom-lists/${listId}/collaborators/${userId}`);
+  return data;
+};
+
+// Users
+export const searchUsers = async (query) => {
+  const { data } = await api.get('/profile/search', { params: { q: query } });
+  return data;
+};
+
+// Groups
+export const fetchGroups = async (page = 1, limit = 20, query = '') => {
+  const { data } = await api.get('/groups', { params: { page, limit, q: query } });
+  return data;
+};
+
+export const fetchMyGroups = async () => {
+  const { data } = await api.get('/groups/my-groups');
+  return data;
+};
+
+export const createGroup = async (groupData) => {
+  const { data } = await api.post('/groups', groupData);
+  return data;
+};
+
+export const fetchGroupById = async (id) => {
+  const { data } = await api.get(`/groups/${id}`);
+  return data;
+};
+
+export const joinGroup = async (id) => {
+  const { data } = await api.post(`/groups/${id}/join`);
+  return data;
+};
+
+export const leaveGroup = async (id) => {
+  const { data } = await api.post(`/groups/${id}/leave`);
+  return data;
+};
+
+export const postGroupDiscussion = async (groupId, content) => {
+  const { data } = await api.post(`/groups/${groupId}/discussions`, { content });
+  return data;
+};
+
+export const deleteGroupDiscussion = async (groupId, discussionId) => {
+  const { data } = await api.delete(`/groups/${groupId}/discussions/${discussionId}`);
+  return data;
+};
+
 export default api;
 
 

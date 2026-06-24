@@ -38,7 +38,7 @@ router.get('/genres', async (req, res) => {
 // Discover with filters
 router.get('/discover', async (req, res) => {
   try {
-    const { with_genres, year, sort_by, page, mediaType = 'movie' } = req.query;
+    const { with_genres, year, sort_by, page, mediaType = 'movie', ...otherParams } = req.query;
     const data = await discoverMovies({
       mediaType,
       with_genres,
@@ -46,6 +46,7 @@ router.get('/discover', async (req, res) => {
       first_air_date_year: year ? Number(year) : undefined, // For TV
       sort_by,
       page: page ? Number(page) : 1,
+      ...otherParams
     });
     res.json(data);
   } catch (error) {

@@ -13,6 +13,8 @@ import Profile from '@/pages/Profile';
 import SearchResults from '@/pages/SearchResults';
 import Offline from '@/pages/Offline';
 import '@/styles/globals.css';
+import Groups from '@/pages/Groups';
+import GroupDetail from '@/pages/GroupDetail';
 import NotFound from './pages/NotFound';
 
 // Apply saved theme class before first render.
@@ -40,6 +42,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="profile" element={<Profile />} />
             <Route path="search/:searchTerm" element={<SearchResults />} />
             <Route path="offline" element={<Offline />} />
+            <Route path="groups" element={<Groups />} />
+            <Route path="groups/:id" element={<GroupDetail />} />
             <Route path='*' element={<NotFound />} />
           </Route>
         </Routes>

@@ -59,6 +59,23 @@ router.put('/me', authMiddleware, validate(updateSchema), async (req, res) => {
   res.json(updatedUser);
 });
 
+// Search users by username or email
+router.get('/search', authMiddleware, async (req, res) => {
+  const { q } = req.query;
+  if (!q) return res.json([]);
+  
+  const regex = new RegExp(q, 'i');
+  // Return users matching query, excluding self and password
+  const users = await User.find({
+    $and: [
+      { _id: { $ne: req.user._id } },
+      { $or: [{ username: regex }, { email: regex }, { name: regex }] }
+    ]
+  }).select('username name avatar _id').limit(10);
+  
+  res.json(users);
+});
+
 // Avatar upload via Cloudinary
 router.post('/avatar', authMiddleware, upload.single('avatar'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });

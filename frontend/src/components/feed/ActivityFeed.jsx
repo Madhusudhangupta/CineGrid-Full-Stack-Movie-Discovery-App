@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchFeed } from '@/utils/api';
 import Shimmer from '@/components/layout/Shimmer';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
 const ActivityItem = ({ activity }) => {
   const { user, type, media, mediaType, rating, listId, createdAt } = activity;
@@ -69,15 +70,35 @@ const ActivityItem = ({ activity }) => {
 
 export default function ActivityFeed() {
   const [feed, setFeed] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [error, setError] = useState('');
+
+  const loadMore = () => {
+    if (isFetchingNextPage || !hasMore) return;
+    setIsFetchingNextPage(true);
+    fetchFeed(page + 1, 20)
+      .then((data) => {
+        setFeed(prev => [...prev, ...(data.items || [])]);
+        setPage(p => p + 1);
+        setHasMore(data.page < data.totalPages);
+      })
+      .catch(console.error)
+      .finally(() => setIsFetchingNextPage(false));
+  };
+
+  const { sentinelRef } = useInfiniteScroll({ hasMore, onLoadMore: loadMore });
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     fetchFeed(1, 20)
       .then((data) => {
         if (mounted) {
           setFeed(data.items || []);
+          setHasMore(data.page < data.totalPages);
           setLoading(false);
         }
       })
@@ -103,6 +124,15 @@ export default function ActivityFeed() {
         {feed.map(item => (
           <ActivityItem key={item._id} activity={item} />
         ))}
+        {hasMore && (
+          <div ref={sentinelRef} className="p-4 flex justify-center text-slate-500">
+            {isFetchingNextPage ? (
+              <div className="animate-spin h-5 w-5 border-2 border-sky-500 rounded-full border-t-transparent" />
+            ) : (
+              <div className="h-5" />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
