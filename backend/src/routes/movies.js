@@ -11,22 +11,24 @@ const {
 
 const router = express.Router();
 
-//  Trending movies
+//  Trending movies or TV
 router.get('/trending', async (req, res) => {
   try {
-    const movies = await fetchTrendingMovies();
-    console.log('Fetched trending movies', { count: movies.length });
+    const { mediaType = 'movie' } = req.query;
+    const movies = await fetchTrendingMovies(mediaType);
+    console.log('Fetched trending', { count: movies.length, mediaType });
     res.json(movies);
   } catch (error) {
-    console.error('Failed to fetch trending movies', { error });
-    res.status(500).json({ error: 'Failed to fetch trending movies' });
+    console.error('Failed to fetch trending', { error });
+    res.status(500).json({ error: 'Failed to fetch trending' });
   }
 });
 
 // Genres
 router.get('/genres', async (req, res) => {
   try {
-    const genres = await fetchGenres();
+    const { mediaType = 'movie' } = req.query;
+    const genres = await fetchGenres(mediaType);
     res.json(genres);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch genres' });
@@ -36,16 +38,18 @@ router.get('/genres', async (req, res) => {
 // Discover with filters
 router.get('/discover', async (req, res) => {
   try {
-    const { with_genres, year, sort_by, page } = req.query;
+    const { with_genres, year, sort_by, page, mediaType = 'movie' } = req.query;
     const data = await discoverMovies({
+      mediaType,
       with_genres,
       primary_release_year: year ? Number(year) : undefined,
+      first_air_date_year: year ? Number(year) : undefined, // For TV
       sort_by,
       page: page ? Number(page) : 1,
     });
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to discover movies' });
+    res.status(500).json({ error: 'Failed to discover' });
   }
 });
 

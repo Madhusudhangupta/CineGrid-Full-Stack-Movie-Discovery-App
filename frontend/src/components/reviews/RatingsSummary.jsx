@@ -20,10 +20,10 @@ export default function RatingsSummary({ movieId }) {
     }));
   }, [summary]);
 
-  if (!summary) return <div className="text-sm opacity-70">Loading rating…</div>;
+  if (!summary) return <div className="mt-4 border rounded-lg p-3 w-full h-full text-sm opacity-70">Loading rating…</div>;
 
   return (
-    <div className="mt-4 border rounded-lg p-3">
+    <div className="mt-4 border rounded-lg p-3 w-full h-full">
       <div className="flex items-baseline gap-3 mb-3">
         <span className="text-3xl font-semibold">{(summary.avg || 0).toFixed(1)}</span>
         <span className="text-sm opacity-70">{summary.count} ratings</span>

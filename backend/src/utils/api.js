@@ -31,17 +31,19 @@ const getCache = (key) => {
   return hit.data;
 };
 
-const fetchTrendingMovies = async () => {
+const fetchTrendingMovies = async (mediaType = 'movie') => {
   try {
-    const ck = 'trending:week';
+    const ck = `trending:week:${mediaType}`;
     const cached = getCache(ck);
     if(cached) return cached;
-    const response = await axios.get(`${TMDB_BASE_URL}/trending/movie/week`, {
+    const response = await axios.get(`${TMDB_BASE_URL}/trending/${mediaType}/week`, {
       params: { api_key: TMDB_API_KEY },
     });
-    return setCache(ck, response.data.results, 10*60*1000);
+    // Ensure media_type is present for frontend
+    const results = (response.data.results || []).map(item => ({ ...item, media_type: item.media_type || mediaType }));
+    return setCache(ck, results, 10*60*1000);
   } catch (error) {
-    console.error('Error fetching trending movies:', error.response?.data || error.message);
+    console.error('Error fetching trending:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -54,9 +56,27 @@ const fetchMovieById = async (movieId) => {
     const response = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
       params: { api_key: TMDB_API_KEY },
     });
-    return setCache(ck, response.data, 60*60*1000);
+    // Ensure media_type is present for frontend
+    const data = { ...response.data, media_type: 'movie' };
+    return setCache(ck, data, 60*60*1000);
   } catch (error) {
     console.error('Error fetching movie by ID:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+const fetchTvById = async (tvId) => {
+  try {
+    const ck = `tv:${tvId}`;
+    const cached = getCache(ck);
+    if(cached) return cached;
+    const response = await axios.get(`${TMDB_BASE_URL}/tv/${tvId}`, {
+      params: { api_key: TMDB_API_KEY },
+    });
+    const data = { ...response.data, media_type: 'tv' };
+    return setCache(ck, data, 60*60*1000);
+  } catch (error) {
+    console.error('Error fetching TV by ID:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -88,7 +108,7 @@ const fetchVideos = async (movieId) => {
   }
 };
 
-// Search movies by query (paginated TMDB response)
+// Search multi by query (paginated TMDB response)
 const searchMovies = async (query, page = 1, limit = 20) => {
   try {
     const resultsPerTmdbPage = 20;
@@ -100,7 +120,7 @@ const searchMovies = async (query, page = 1, limit = 20) => {
     let totalPagesFromTmdb = 0;
 
     for (let i = 0; i < pagesNeeded; i++) {
-      const response = await axios.get(`${TMDB_BASE_URL}/search/movie`, {
+      const response = await axios.get(`${TMDB_BASE_URL}/search/multi`, {
         params: { api_key: TMDB_API_KEY, query, page: page + i },
       });
 
@@ -109,7 +129,9 @@ const searchMovies = async (query, page = 1, limit = 20) => {
         totalPagesFromTmdb = response.data.total_pages || 0;
       }
 
-      allResults.push(...(response.data.results || []));
+      // Filter out people, keep movies and tv
+      const filtered = (response.data.results || []).filter(item => item.media_type === 'movie' || item.media_type === 'tv');
+      allResults.push(...filtered);
     }
 
     // Always slice to the requested limit
@@ -122,19 +144,19 @@ const searchMovies = async (query, page = 1, limit = 20) => {
       total_results: totalResults || sliced.length,
     };
   } catch (error) {
-    console.error('Error searching movies:', error.response?.data || error.message);
+    console.error('Error searching:', error.response?.data || error.message);
     throw error;
   }
 };
 
-// fetch movies by genre
-const fetchGenres = async () => {
+// fetch genres
+const fetchGenres = async (mediaType = 'movie') => {
   try {
-    const ck = 'genres:movie';
+    const ck = `genres:${mediaType}`;
     const cached = getCache(ck);
     if(cached) return cached;
 
-    const { data } = await axios.get(`${TMDB_BASE_URL}/genre/movie/list`, {
+    const { data } = await axios.get(`${TMDB_BASE_URL}/genre/${mediaType}/list`, {
       params: { api_key: TMDB_API_KEY},
     });
     return setCache(ck, data.genres, 24*60*60*1000);
@@ -144,20 +166,26 @@ const fetchGenres = async () => {
   }
 }
 
-// discover movies
+// discover
 const discoverMovies = async (input = {}) => {
   try {
+    const mediaType = input.mediaType || 'movie';
     const params = {
       api_key: TMDB_API_KEY,
       page: 1,
       ...input,
     };
+    delete params.mediaType;
     Object.keys(params).forEach((k) => params[k] == null && delete params[k]);
 
-    const { data } = await axios.get(`${TMDB_BASE_URL}/discover/movie`, { params });
+    const { data } = await axios.get(`${TMDB_BASE_URL}/discover/${mediaType}`, { params });
+    // Ensure media_type is present
+    if (data.results) {
+      data.results = data.results.map(item => ({ ...item, media_type: mediaType }));
+    }
     return data;
   } catch (error) {
-    console.error('Error discovering movies:', error.response?.data || error.message);
+    console.error('Error discovering:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -193,6 +221,7 @@ const fetchProviders = async (movieId) => {
 module.exports = {
   fetchTrendingMovies,
   fetchMovieById,
+  fetchTvById,
   fetchSimilarMovies,
   fetchVideos,
   searchMovies,

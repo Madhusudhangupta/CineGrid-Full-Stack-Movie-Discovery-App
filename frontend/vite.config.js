@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import tailwindcss from '@tailwindcss/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -11,6 +12,30 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      devOptions: { enabled: true },
+      manifest: {
+        name: 'CineSphere',
+        short_name: 'CineSphere',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#0f172a', // Tailwind slate-900
+        theme_color: '#38bdf8', // Tailwind sky-400
+        icons: [
+          {
+            src: '/vite.svg', // Fallback to vite svg since icon.png might not exist
+            sizes: '192x192',
+            type: 'image/svg+xml',
+          },
+          {
+            src: '/vite.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml',
+          }
+        ],
+      },
+    }),
   ],
   server: {
     host: '0.0.0.0',

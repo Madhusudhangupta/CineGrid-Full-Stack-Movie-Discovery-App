@@ -4,7 +4,11 @@ const customListSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 100 },
   description: { type: String, trim: true, maxlength: 500 },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-  movies: [{ type: Number }], // TMDb movie IDs
+  movies: [{ type: Number }], // Legacy
+  items: [{ 
+    mediaId: { type: Number, required: true },
+    mediaType: { type: String, enum: ['movie', 'tv'], default: 'movie' }
+  }],
   isPublic: { type: Boolean, default: false, index: true },
   coverImage: { type: String }, // URL
   createdAt: { type: Date, default: Date.now },

@@ -12,6 +12,8 @@ const moviesAdvancedRoutes = require('./routes/moviesAdvanced');
 const reviewsRoutes = require('./routes/reviews');
 const recommendationsRoutes = require('./routes/recommendations');
 const watchlistRoutes = require('./routes/watchlist');
+const tvRoutes = require('./routes/tv');
+const feedRoutes = require('./routes/feed');
 const notificationsRoutes = require('./routes/notifications');
 const customListsRoutes = require('./routes/customLists');
 const profileRoutes = require('./routes/profile');
@@ -74,6 +76,8 @@ app.use('/api/movies', moviesRoutes)
 app.use('/api/movies-advanced', moviesAdvancedRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
+app.use('/api/tv', tvRoutes);
+app.use('/api/feed', feedRoutes);
 app.use('/api/watchlist', watchlistRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/custom-lists', customListsRoutes);

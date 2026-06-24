@@ -61,12 +61,21 @@ const userSchema = new mongoose.Schema({
   },
   viewingHistory: [
     {
-      movieId: { type: Number },
+      movieId: { type: Number }, // acts as mediaId
+      mediaType: { type: String, enum: ['movie', 'tv'], default: 'movie' },
       viewedAt: { type: Date, default: Date.now },
     },
   ],
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  achievements: [
+    {
+      name: { type: String },
+      description: { type: String },
+      icon: { type: String }, // optional URL or emoji
+      earnedAt: { type: Date, default: Date.now },
+    }
+  ],
   createdAt: { type: Date, default: Date.now },
   lastActive: { type: Date, default: Date.now },
 });

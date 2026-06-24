@@ -114,17 +114,18 @@ const MovieDetail = () => {
             <p className="text-slate-700 dark:text-slate-300">{movie.overview}</p>
           </section>
 
-          <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <RatingsSummary movieId={Number(id)} />
-            <WhereToWatch movieId={Number(id)} />
+          <div className="mt-2 flex flex-col gap-4 md:flex-row md:items-stretch md:justify-between w-full">
+            <div className="w-full md:w-1/2">
+              <RatingsSummary movieId={Number(id)} />
+            </div>
+            <div className="w-full md:w-1/2">
+              <WhereToWatch movieId={Number(id)} />
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-3">Similar Movies</h2>
-        <SimilarMovies movies={similarMovies} />
-      </div>
+      <SimilarMovies movies={similarMovies} />
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-3">Reviews</h2>

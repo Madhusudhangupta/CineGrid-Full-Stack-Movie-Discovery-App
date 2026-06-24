@@ -42,6 +42,11 @@ export const fetchMovieById = async (id) => {
   return data;
 };
 
+export const fetchTvById = async (id) => {
+  const { data } = await api.get(`/tv/${id}`);
+  return data;
+};
+
 export const fetchSimilarMovies = async (id) => {
   const { data } = await api.get(`/movies/${id}/similar`);
   return data;
@@ -90,6 +95,27 @@ export const postReview = async ({ movieId, rating, comment }) => {
 export const fetchComments = async (movieId, { page = 1, limit = 10 } = {}) => {
   const { data } = await api.get(`/comments/${movieId}`, { params: { page, limit } });
   return data; // {items, ...}
+};
+
+export const uploadAvatar = async (file) => {
+  const formData = new FormData();
+  formData.append("avatar", file);
+  const { data } = await api.post("/profile/avatar", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+};
+
+// Feed
+export const fetchFeed = async (page = 1, limit = 20) => {
+  const { data } = await api.get('/feed', { params: { page, limit } });
+  return data;
+};
+
+// Profile Stats
+export const fetchProfileStats = async () => {
+  const { data } = await api.get('/profile/stats');
+  return data;
 };
 
 export default api;

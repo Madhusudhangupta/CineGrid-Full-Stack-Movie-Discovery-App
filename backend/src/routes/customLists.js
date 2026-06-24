@@ -2,6 +2,8 @@ const express = require('express');
 const Joi = require('joi');
 const authMiddleware = require('../middleware/auth');
 const CustomList = require('../models/CustomList');
+const Activity = require('../models/Activity');
+const { checkMilestones } = require('../services/achievements');
 
 const router = express.Router();
 
@@ -37,35 +39,60 @@ router.get('/my-lists', authMiddleware, async (req, res) => {
 // Create new list
 router.post('/', authMiddleware, validate(createListSchema), async (req, res) => {
   const { name, description, isPublic, coverImage } = req.body;
-  const list = new CustomList({ name, description, isPublic, coverImage, user: req.user._id, movies: [] });
+  const list = new CustomList({ name, description, isPublic, coverImage, user: req.user._id, items: [] });
   await list.save();
+
+  // Create activity
+  if (isPublic) {
+    try {
+      await Activity.create({
+        user: req.user._id,
+        type: 'USER_CREATED_CUSTOM_LIST',
+        listId: list._id,
+      });
+    } catch (actErr) {
+      console.error('Failed to create custom list activity:', actErr);
+    }
+  }
+
+  // Check milestones
+  await checkMilestones(req.user._id, 'LIST');
+
   res.status(201).json(list);
 });
 
 // Add movie to list
-router.post('/:listId/movies', authMiddleware, async (req, res) => {
+router.post('/:listId/items', authMiddleware, async (req, res) => {
   const { listId } = req.params;
-  const { movieId } = req.body;
-
-  const list = await CustomList.findById(listId);
+  const { mediaId, mediaType = 'movie' } = req.body;
+  const list = await CustomList.findOne({ _id: listId, user: req.user._id });
   if (!list) return res.status(404).json({ error: 'List not found' });
-  if (list.user.toString() !== req.user._id.toString()) return res.status(403).json({ error: 'Not authorized' });
-  if (list.movies.includes(movieId)) return res.status(400).json({ error: 'Movie already added' });
   
-  list.movies.push(movieId);
+  if (!list.items) list.items = [];
+  const exists = list.items.some(i => i.mediaId === Number(mediaId) && i.mediaType === mediaType);
+  if (exists) return res.status(400).json({ error: 'Item already added' });
+  
+  list.items.push({ mediaId: Number(mediaId), mediaType });
   await list.save();
   res.json(list);
 });
 
 // Remove movie from list
-router.delete('/:listId/movies/:movieId', authMiddleware, async (req, res) => {
-  const { listId, movieId } = req.params;
+router.delete('/:listId/items/:mediaId', authMiddleware, async (req, res) => {
+  const { listId, mediaId } = req.params;
+  const { mediaType = 'movie' } = req.query; // pass mediaType in query, or default to movie
 
-  const list = await CustomList.findById(listId);
+  const list = await CustomList.findOne({ _id: listId, user: req.user._id });
   if (!list) return res.status(404).json({ error: 'List not found' });
-  if (list.user.toString() !== req.user._id.toString()) return res.status(403).json({ error: 'Not authorized' });
 
-  list.movies = list.movies.filter(id => id !== Number(movieId));
+  if (list.items) {
+    list.items = list.items.filter(item => !(item.mediaId === Number(mediaId) && item.mediaType === mediaType));
+  }
+  // Remove from legacy as well just in case
+  if (list.movies) {
+    list.movies = list.movies.filter(id => id !== Number(mediaId));
+  }
+
   await list.save();
   res.json(list);
 });

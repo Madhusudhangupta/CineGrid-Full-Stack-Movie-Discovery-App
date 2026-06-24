@@ -13,28 +13,35 @@ export default function WhereToWatch({ movieId, region = 'IN' }) {
 
   const regionProviders = useMemo(() => (providers && providers[region]) || null, [providers, region]);
 
-  if (error) return <p className="text-sm text-red-500">{error}</p>;
-  if (!providers) return <p className="text-sm opacity-70">Loading watch providers…</p>;
-  if (!regionProviders) return <p className="text-sm opacity-70">No providers for your region.</p>;
+  if (error) return <div className="mt-4 border rounded-lg p-3 w-full h-full"><h3 className="font-semibold mb-2">Where to watch</h3><p className="text-sm text-red-500">{error}</p></div>;
+  if (!providers) return <div className="mt-4 border rounded-lg p-3 w-full h-full"><h3 className="font-semibold mb-2">Where to watch</h3><p className="text-sm opacity-70">Loading watch providers…</p></div>;
+  if (!regionProviders) return <div className="mt-4 border rounded-lg p-3 w-full h-full"><h3 className="font-semibold mb-2">Where to watch</h3><p className="text-sm opacity-70">No providers for your region.</p></div>;
 
   const renderRow = (label, list) =>
     list?.length ? (
       <div className="flex items-center gap-2 flex-wrap mb-2">
         <span className="text-sm font-semibold w-24">{label}:</span>
         {list.map((p) => (
-          <span
+          <div
             key={`${label}-${p.provider_id}`}
-            className="text-sm border rounded px-2 py-1 bg-white/60 dark:bg-gray-800/60"
+            className="flex items-center gap-1.5 text-sm border rounded px-2 py-1 bg-white/60 dark:bg-gray-800/60"
             title={p.provider_name}
           >
-            {p.provider_name}
-          </span>
+            {p.logo_path && (
+              <img
+                src={`https://image.tmdb.org/t/p/w92${p.logo_path}`}
+                alt={p.provider_name}
+                className="w-5 h-5 rounded-sm object-cover"
+              />
+            )}
+            <span>{p.provider_name}</span>
+          </div>
         ))}
       </div>
     ) : null;
 
   return (
-    <div className="border rounded-lg p-3 mt-4">
+    <div className="mt-4 border rounded-lg p-3 w-full h-full">
       <h3 className="font-semibold mb-2">Where to watch</h3>
       {renderRow('Stream', regionProviders.flatrate)}
       {renderRow('Rent', regionProviders.rent)}

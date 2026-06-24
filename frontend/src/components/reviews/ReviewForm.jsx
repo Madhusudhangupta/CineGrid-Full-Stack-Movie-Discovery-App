@@ -11,11 +11,19 @@ export default function ReviewForm({ movieId, setReviews }) {
     e.preventDefault();
     try {
       const review = await postReview({ movieId, rating, comment });
-      setReviews((prev) => [...prev, review]);
+      setReviews((prev) => {
+        const existingIndex = prev.findIndex((r) => r._id === review._id);
+        if (existingIndex !== -1) {
+          const newReviews = [...prev];
+          newReviews[existingIndex] = review;
+          return newReviews;
+        }
+        return [...prev, review];
+      });
       setRating(1);
       setComment('');
-    } catch {
-      setError('Failed to submit review');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to submit review');
     }
   };
 
@@ -62,7 +70,7 @@ export default function ReviewForm({ movieId, setReviews }) {
         type="submit"
         className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
       >
-        "Submit"
+        Submit
       </button>
     </form>
   );
